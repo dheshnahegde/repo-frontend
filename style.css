@@ -46,4 +46,16 @@ body {
 table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
 th, td { padding: 15px; text-align: left; border-bottom: 1px solid #222; }
 th { color: #666; background: #1a1a1a; font-weight: 600; }
-code { color: #ff9800; background: #262626; padding: 2px 5px; border-radius: 4px; }Minor UI tweak
+code { color: #ff9800; background: #262626; padding: 2px 5px; border-radius: 4px; }
+/* Status Colors for the Table/Cards */
+.status-completed { color: #4caf50 !important; font-weight: bold; }
+.status-running { color: #ff9800 !important; font-weight: bold; }
+.status-queued { color: #2196f3 !important; font-weight: bold; }
+
+/* Pulse animation for 'Running' jobs to make it look 'Live' */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+.status-running { animation: pulse 1.5s infinite; }Minor UI tweak
