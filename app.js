@@ -1,50 +1,46 @@
-const API_URL = 'http://localhost:8000/api/build-history';
-
-async function refresh() {
+async function fetchJobs() {
     try {
-        const res = await fetch(API_URL);
-        const result = await res.json();
-        if (result.status === "success") {
-            updateUI(result.data);
-            document.getElementById('connection-status').innerText = "🟢 System Online";
-        }
-    } catch (e) {
-        document.getElementById('connection-status').innerText = "🔴 API Offline";
+        const response = await fetch('/jobs'); // Endpoint provided by FastAPI
+        const jobs = await response.json();
+        
+        // Update Active Workers count (jobs with status RUNNING)
+        const runningJobs = jobs.filter(job => job.status === "RUNNING").length;
+        document.getElementById('active-workers').innerText = runningJobs;
+
+        renderTable(jobs);
+    } catch (error) {
+        console.error("Error fetching jobs:", error);
     }
 }
 
-function updateUI(jobs) {
-    const containers = { 'QUEUED': 'q-list', 'RUNNING': 'p-list', 'COMPLETED': 'c-list' };
-    Object.values(containers).forEach(id => { 
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = ""; 
-    });
+function renderTable(jobs) {
+    const tableBody = document.getElementById('job-body');
+    tableBody.innerHTML = ''; // Clear existing rows
 
-    const tableBody = document.getElementById('db-table');
-    if (!tableBody) return;
-    tableBody.innerHTML = "";
+    // Sort jobs so the most important (lowest score) are at the top
+    jobs.sort((a, b) => a.priority - b.priority);
 
     jobs.forEach(job => {
-        // Table row
-        tableBody.insertAdjacentHTML('beforeend', `
-            <tr>
-                <td>#${job.id}</td>
-                <td><strong>${job.repo}</strong></td>
-                <td>Normal</td>
-                <td>0 KB</td>
-                <td><code>---</code></td>
-                <td>${job.status}</td>
-            </tr>
-        `);
+        const row = document.createElement('tr');
+        
+        // Determine CSS class based on status
+        let statusClass = '';
+        if (job.status === 'QUEUED') statusClass = 'status-queued';
+        if (job.status === 'RUNNING') statusClass = 'status-running';
+        if (job.status === 'COMPLETED') statusClass = 'status-completed';
 
-        // Kanban Card
-        const containerId = containers[job.status];
-        if (containerId) {
-            document.getElementById(containerId).insertAdjacentHTML('beforeend', `
-                <div class="job-card"><span class="repo-name">${job.repo}</span><small>ID: ${job.id}</small></div>
-            `);
-        }
+        row.innerHTML = `
+            <td><code>#${job.id}</code></td>
+            <td>${job.repo}</td>
+            <td><span class="priority-badge">${job.priority}</span></td>
+            <td><span class="status-pill ${statusClass}">${job.status}</span></td>
+        `;
+        tableBody.appendChild(row);
     });
 }
-setInterval(refresh, 3000);
-refresh();
+
+// Polling every 3 seconds to keep the UI "Live"
+setInterval(fetchJobs, 3000);
+
+// Initial fetch on load
+fetchJobs();

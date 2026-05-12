@@ -3,47 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Half-Clutch Jenkins Dashboard</title>
+    <title>Mini-Jenkins | Priority Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="header">
-        <h2>Half-Clutch Jenkins Dashboard</h2>
-        <div id="connection-status" class="status-pill">Connecting to API...</div>
-    </div>
+    <div class="container">
+        <header>
+            <h1>🚀 Mini-Jenkins Dashboard</h1>
+            <div class="status-bar">
+                <div class="status-item">
+                    <strong>Active Workers:</strong> <span id="active-workers">0</span> / 3
+                </div>
+                <div class="status-item">
+                    <strong>System:</strong> <span class="status-online">Online</span>
+                </div>
+            </div>
+        </header>
 
-    <div class="board">
-        <div class="column">
-            <div class="column-header" style="color:#2196f3">Queued</div>
-            <div id="q-list" class="card-container"></div>
-        </div>
-        <div class="column">
-            <div class="column-header" style="color:#ff9800">In Progress</div>
-            <div id="p-list" class="card-container"></div>
-        </div>
-        <div class="column">
-            <div class="column-header" style="color:#4caf50">Completed</div>
-            <div id="c-list" class="card-container"></div>
-        </div>
+        <main>
+            <section class="job-table-section">
+                <h2>Build Queue & History</h2>
+                <table id="job-table">
+                    <thead>
+                        <tr>
+                            <th>Job ID</th>
+                            <th>Repository</th>
+                            <th>Priority Score</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="job-body">
+                        </tbody>
+                </table>
+            </section>
+        </main>
     </div>
-
-    <h3>📜 Postgres Database History</h3>
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th>Job ID</th>
-                    <th>Repository</th>
-                    <th>Importance</th>
-                    <th>File Size</th>
-                    <th>Code Hash (MD5)</th>
-                    <th>Final Status</th>
-                </tr>
-            </thead>
-            <tbody id="db-table"></tbody>
-        </table>
-    </div>
-
     <script src="app.js"></script>
 </body>
 </html>
